@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CountDownGiftCoinView">
+        <attr name="giftName" format="string" localization="suggested" />
+        <attr name="countdownTime" format="integer" />
+        <attr name="timeFormat" format="string" />
+        <attr name="giftLayout" format="reference" />
+        <attr name="textSize" format="reference" />
+        <attr name="textColor" format="reference" />
+        <attr name="icon" format="reference" />
+    </declare-styleable>
+
+</resources>
