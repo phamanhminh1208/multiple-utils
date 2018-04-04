@@ -26,7 +26,7 @@ allprojects {
 subprojects {
     apply plugin: 'com.github.dcendents.android-maven'
 
-    group='com.github.phamanhminh1208'
+    group='com.github.phamanhminh1208.multiple-utils'
 
 //    task sourcesJar(type: Jar, dependsOn: classes) {
 //        classifier = 'sources'
