@@ -264,7 +264,11 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
             @Override
             public void run() {
                 // Consume the purchase async
-                mBillingClient.consumeAsync(purchaseToken, onConsumeListener);
+                if (mBillingClient != null) {
+                    mBillingClient.consumeAsync(purchaseToken, onConsumeListener);
+                } else if (mBillingUpdatesListener != null) {
+                    mBillingUpdatesListener.onConsumeFail(purchaseToken, BillingResponse.BILLING_UNAVAILABLE);
+                }
             }
         };
 
@@ -340,6 +344,11 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
         Runnable queryToExecute = new Runnable() {
             @Override
             public void run() {
+                //skip if billing client is null
+                if (mBillingClient == null) {
+                    return;
+                }
+
                 long time = System.currentTimeMillis();
                 PurchasesResult purchasesResult = mBillingClient.queryPurchases(SkuType.INAPP);
                 Log.i(TAG, "Querying purchases elapsed time: " + (System.currentTimeMillis() - time)
@@ -376,6 +385,10 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
     }
 
     public void startServiceConnection(final Runnable executeOnSuccess) {
+        if (mBillingClient == null) {
+            return;
+        }
+
         mBillingClient.startConnection(new BillingClientStateListener() {
             @Override
             public void onBillingSetupFinished(@BillingResponse int billingResponseCode) {
