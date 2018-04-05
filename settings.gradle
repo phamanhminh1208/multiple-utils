@@ -1,1 +1,1 @@
-include ':app', ':billing-utils', ':color-dialog', ':common-utils'
+include ':sample', ':billing-utils', ':color-dialog', ':common-utils'
