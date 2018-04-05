@@ -17,8 +17,10 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import cn.refactor.lib.colordialog.util.DisplayUtil;
@@ -32,10 +34,10 @@ import cn.refactor.lib.colordialog.util.DisplayUtil;
 public class PromptDialog extends Dialog {
 
     private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
-    private static final int DEFAULT_RADIUS     = 6;
-    public static final int DIALOG_TYPE_INFO    = 0;
-    public static final int DIALOG_TYPE_HELP    = 1;
-    public static final int DIALOG_TYPE_WRONG   = 2;
+    private static final int DEFAULT_RADIUS = 6;
+    public static final int DIALOG_TYPE_INFO = 0;
+    public static final int DIALOG_TYPE_HELP = 1;
+    public static final int DIALOG_TYPE_WRONG = 2;
     public static final int DIALOG_TYPE_SUCCESS = 3;
     public static final int DIALOG_TYPE_WARNING = 4;
     public static final int DIALOG_TYPE_DEFAULT = DIALOG_TYPE_INFO;
@@ -43,12 +45,14 @@ public class PromptDialog extends Dialog {
     private AnimationSet mAnimIn, mAnimOut;
     private View mDialogView;
     private TextView mTitleTv, mContentTv, mPositiveBtn, mNegativeBtn;
+    private ImageButton mCloseBtn;
     private OnButtonListener mOnPositiveListener, mOnNegativeListener;
 
     private int mDialogType;
     private boolean mIsShowAnim;
     private CharSequence mTitle, mContent, mOkBtnText, mCancelBtnText;
     private boolean isNegativeBtnEnabled;
+    private boolean isButtonCloseVisible;
 
     public PromptDialog(Context context) {
         this(context, 0);
@@ -85,6 +89,11 @@ public class PromptDialog extends Dialog {
         mContentTv = (TextView) contentView.findViewById(R.id.tvContent);
         mPositiveBtn = (TextView) contentView.findViewById(R.id.btnPositive);
         mNegativeBtn = (TextView) contentView.findViewById(R.id.btnNegative);
+        mCloseBtn = (ImageButton) contentView.findViewById(R.id.btnClose);
+
+        if (isButtonCloseVisible) {
+            mCloseBtn.setVisibility(View.VISIBLE);
+        }
 
         View llBtnGroup = findViewById(R.id.llBtnGroup);
         ImageView logoIv = (ImageView) contentView.findViewById(R.id.logoIv);
@@ -101,18 +110,18 @@ public class PromptDialog extends Dialog {
 
 
         int radius = DisplayUtil.dp2px(getContext(), DEFAULT_RADIUS);
-        float[] outerRadii = new float[] { radius, radius, radius, radius, 0, 0, 0, 0 };
+        float[] outerRadii = new float[]{radius, radius, radius, radius, 0, 0, 0, 0};
         RoundRectShape roundRectShape = new RoundRectShape(outerRadii, null, null);
         ShapeDrawable shapeDrawable = new ShapeDrawable(roundRectShape);
         shapeDrawable.getPaint().setStyle(Paint.Style.FILL);
         shapeDrawable.getPaint().setColor(getContext().getResources().getColor(getColorResId(mDialogType)));
-        LinearLayout llTop = (LinearLayout) findViewById(R.id.llTop);
+        RelativeLayout llTop = (RelativeLayout) findViewById(R.id.llTop);
         llTop.setBackgroundDrawable(shapeDrawable);
 
         mTitleTv.setText(mTitle);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            mContentTv.setText(Html.fromHtml(mContent.toString(),Html.FROM_HTML_MODE_LEGACY));
+            mContentTv.setText(Html.fromHtml(mContent.toString(), Html.FROM_HTML_MODE_LEGACY));
         } else {
             mContentTv.setText(Html.fromHtml(mContent.toString()));
         }
@@ -121,7 +130,7 @@ public class PromptDialog extends Dialog {
         mPositiveBtn.setText(mOkBtnText);
         mNegativeBtn.setText(mCancelBtnText);
 
-        if(isNegativeBtnEnabled) {
+        if (isNegativeBtnEnabled) {
             contentView.findViewById(R.id.btnNegativeContainer).setVisibility(View.VISIBLE);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPositiveBtn.getLayoutParams();
             params.weight = 1;
@@ -131,7 +140,7 @@ public class PromptDialog extends Dialog {
 
     private void resizeDialog() {
         WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.width = (int)(DisplayUtil.getScreenSize(getContext()).x * 0.7);
+        params.width = (int) (DisplayUtil.getScreenSize(getContext()).x * 0.7);
         getWindow().setAttributes(params);
     }
 
@@ -257,7 +266,7 @@ public class PromptDialog extends Dialog {
                 }
             }
         });
-        if(isNegativeBtnEnabled) {
+        if (isNegativeBtnEnabled) {
             mNegativeBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -267,6 +276,13 @@ public class PromptDialog extends Dialog {
                 }
             });
         }
+
+        mCloseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
 
         initAnimListener();
     }
@@ -301,7 +317,7 @@ public class PromptDialog extends Dialog {
 
 
     private void setBtnBackground(final TextView... btns) {
-        for(TextView btn : btns) {
+        for (TextView btn : btns) {
             btn.setTextColor(createColorStateList(getContext().getResources().getColor(getColorResId(mDialogType)),
                     getContext().getResources().getColor(R.color.color_dialog_gray)));
             btn.setBackgroundDrawable(getContext().getResources().getDrawable(getSelBtn(mDialogType)));
@@ -311,7 +327,7 @@ public class PromptDialog extends Dialog {
 
     private void setBottomCorners(View llBtnGroup) {
         int radius = DisplayUtil.dp2px(getContext(), DEFAULT_RADIUS);
-        float[] outerRadii = new float[] { 0, 0, 0, 0, radius, radius, radius, radius };
+        float[] outerRadii = new float[]{0, 0, 0, 0, radius, radius, radius, radius};
         RoundRectShape roundRectShape = new RoundRectShape(outerRadii, null, null);
         ShapeDrawable shapeDrawable = new ShapeDrawable(roundRectShape);
         shapeDrawable.getPaint().setColor(Color.WHITE);
@@ -324,14 +340,14 @@ public class PromptDialog extends Dialog {
     }
 
     private ColorStateList createColorStateList(int normal, int pressed, int focused, int unable) {
-        int[] colors = new int[] { pressed, focused, normal, focused, unable, normal };
+        int[] colors = new int[]{pressed, focused, normal, focused, unable, normal};
         int[][] states = new int[6][];
-        states[0] = new int[] { android.R.attr.state_pressed, android.R.attr.state_enabled };
-        states[1] = new int[] { android.R.attr.state_enabled, android.R.attr.state_focused };
-        states[2] = new int[] { android.R.attr.state_enabled };
-        states[3] = new int[] { android.R.attr.state_focused };
-        states[4] = new int[] { android.R.attr.state_window_focused };
-        states[5] = new int[] {};
+        states[0] = new int[]{android.R.attr.state_pressed, android.R.attr.state_enabled};
+        states[1] = new int[]{android.R.attr.state_enabled, android.R.attr.state_focused};
+        states[2] = new int[]{android.R.attr.state_enabled};
+        states[3] = new int[]{android.R.attr.state_focused};
+        states[4] = new int[]{android.R.attr.state_window_focused};
+        states[5] = new int[]{};
         ColorStateList colorList = new ColorStateList(states, colors);
         return colorList;
     }
@@ -406,7 +422,6 @@ public class PromptDialog extends Dialog {
         return this;
     }
 
-
     public PromptDialog setAnimationIn(AnimationSet animIn) {
         mAnimIn = animIn;
         return this;
@@ -415,6 +430,23 @@ public class PromptDialog extends Dialog {
     public PromptDialog setAnimationOut(AnimationSet animOut) {
         mAnimOut = animOut;
         initAnimListener();
+        return this;
+    }
+
+    public PromptDialog setButtonCloseVisible(boolean visible) {
+        isButtonCloseVisible = visible;
+
+        return this;
+    }
+
+    public PromptDialog setCancelable(boolean cancelable, boolean cancelOnTouchOutside) {
+        this.setCancelable(cancelable);
+        this.setCanceledOnTouchOutside(cancelOnTouchOutside);
+        return this;
+    }
+
+    public PromptDialog showDialog() {
+        this.show();
         return this;
     }
 
