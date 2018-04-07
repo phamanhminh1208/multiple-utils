@@ -12,20 +12,24 @@ public class VibrateUtil {
     private static final int NORMAL_LENGTH = 300;
     private static final int STRONG_LENGTH = 1000;
 
-    public static void vibrate(Context context, int length){
-        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        v.vibrate(length);
+    public static void vibrate(Context context, int length) {
+        if (context != null) {
+            Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            if (v != null) {
+                v.vibrate(length);
+            }
+        }
     }
 
-    public static void lightVibrate(Context context){
+    public static void lightVibrate(Context context) {
         vibrate(context, LIGHT_LENGTH);
     }
 
-    public static void normalVibrate(Context context){
+    public static void normalVibrate(Context context) {
         vibrate(context, NORMAL_LENGTH);
     }
 
-    public static void strongVibrate(Context context){
+    public static void strongVibrate(Context context) {
         vibrate(context, STRONG_LENGTH);
     }
 }
