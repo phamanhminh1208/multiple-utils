@@ -68,9 +68,9 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
      */
     private boolean mIsServiceConnected;
 
-    private final BillingStatusListener mBillingUpdatesListener;
+    private BillingStatusListener mBillingUpdatesListener;
 
-    private final Activity mActivity;
+    private Activity mActivity;
 
     private final List<Purchase> mPurchases = new ArrayList<>();
 
@@ -200,6 +200,14 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
         if (mBillingClient != null && mBillingClient.isReady()) {
             mBillingClient.endConnection();
             mBillingClient = null;
+        }
+
+        if (mActivity != null) {
+            mActivity = null;
+        }
+
+        if (mBillingUpdatesListener != null) {
+            mBillingUpdatesListener = null;
         }
     }
 
