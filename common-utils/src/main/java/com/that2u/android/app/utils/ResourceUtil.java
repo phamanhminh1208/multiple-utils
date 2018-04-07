@@ -9,6 +9,9 @@ import android.net.Uri;
 
 public class ResourceUtil {
 
+    public static final String TYPE_STRING = "string";
+    public static final String TYPE_DRAWABLE = "drawable";
+
     public static int getResourceId(Context context, String name, String type) {
         return context.getResources().getIdentifier(name, type,
                 context.getPackageName());
