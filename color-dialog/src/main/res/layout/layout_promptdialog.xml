@@ -90,20 +90,6 @@
         android:padding="10dp"
         android:weightSum="2">
 
-        <TextView
-            android:id="@+id/btnPositive"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="2"
-            android:clickable="true"
-            android:gravity="center"
-            android:minHeight="40dp"
-            android:text="OK"
-            android:textColor="#676767" />
-
-
         <LinearLayout
             android:id="@+id/btnNegativeContainer"
             android:layout_width="0dp"
@@ -139,6 +125,21 @@
                 android:textColor="#676767" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/btnPositive"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="2"
+            android:clickable="true"
+            android:gravity="center"
+            android:minHeight="40dp"
+            android:text="OK"
+            android:textColor="#676767" />
+
+
     </LinearLayout>
 
 </LinearLayout>
