@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewStub;
@@ -60,7 +61,7 @@ public class CountDownGiftCoinView extends LinearLayout {
 
         a.recycle();
 
-        if(Strings.isNullOrEmpty(timeFormat)){
+        if (Strings.isNullOrEmpty(timeFormat)) {
             timeFormat = DEFAULT_TIME_FORMAT;
         }
 
@@ -70,24 +71,26 @@ public class CountDownGiftCoinView extends LinearLayout {
 
         mCountdownTextView = (TextView) findViewById(R.id.countdown_text);
 
-        if(textSize != NOT_SET_VALUE) {
+        Log.d("PAM", "textSize: " + textSize);
+
+        if (textSize != NOT_SET_VALUE) {
             mGiftNameTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
             mCountdownTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
         }
 
-        if(textColor != NOT_SET_VALUE){
+        if (textColor != NOT_SET_VALUE) {
             mGiftNameTextView.setTextColor(textColor);
             mCountdownTextView.setTextColor(textColor);
         }
 
-        if(iconDrawable != null){
+        if (iconDrawable != null) {
 //            ImageView giftIconView = (ImageView) findViewById(R.id.gift_icon_view);
             mGiftNameTextView.setCompoundDrawablesWithIntrinsicBounds(iconDrawable, null, null, null);
 //            giftIconView.setImageDrawable(iconDrawable);
         }
 
         ViewStub viewStub = (ViewStub) findViewById(R.id.viewstub);
-        if(layoutId > 0) {
+        if (layoutId > 0) {
             viewStub.setLayoutResource(layoutId);
             mGiftView = viewStub.inflate();
             mGiftView.setVisibility(GONE);
@@ -96,7 +99,7 @@ public class CountDownGiftCoinView extends LinearLayout {
         this.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mListener != null){
+                if (mListener != null) {
                     mListener.onReceiveGift(CountDownGiftCoinView.this);
                 }
             }
@@ -106,39 +109,45 @@ public class CountDownGiftCoinView extends LinearLayout {
         mGiftNameTextView.setText(giftName);
 
         mTimeFormat = new SimpleDateFormat(timeFormat);
-        if(!isInEditMode()) {
+        if (!isInEditMode()) {
             mTimeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         }
 
         mCalendar = Calendar.getInstance();
 
-        if(context instanceof OnReceiveGiftListener){
+        if (context instanceof OnReceiveGiftListener) {
             mListener = (OnReceiveGiftListener) context;
         }
 
         setTime(mDefaultCountdownTime);
     }
 
-    public View getGiftView(){
+    public void setGiftName(String giftName) {
+        if (mGiftNameTextView != null) {
+            mGiftNameTextView.setText(giftName);
+        }
+    }
+
+    public View getGiftView() {
         return mGiftView;
     }
 
-    public void setOnReceiveGiftListener(OnReceiveGiftListener listener){
+    public void setOnReceiveGiftListener(OnReceiveGiftListener listener) {
         mListener = listener;
     }
 
-    public void setTime(long millisecond){
+    public void setTime(long millisecond) {
         cancelTimer();
         mCountdownTime = millisecond;
-        if(millisecond > 0) {
+        if (millisecond > 0) {
             setGiftViewVisible(false);
             updateCountdownText(mCountdownTime);
-        }else {
+        } else {
             setGiftViewVisible(true);
         }
     }
 
-    public void startCountDown(){
+    public void startCountDown() {
         cancelTimer();
 
         mTimer = new CountDownTimer(mCountdownTime, SECOND_TO_MILLISECOND) {
@@ -155,26 +164,26 @@ public class CountDownGiftCoinView extends LinearLayout {
         mTimer.start();
     }
 
-    private void setGiftViewVisible(boolean isVisible){
+    private void setGiftViewVisible(boolean isVisible) {
         mGiftView.setVisibility(isVisible ? VISIBLE : GONE);
         mCountdownTextView.setVisibility(isVisible ? GONE : VISIBLE);
         this.setClickable(isVisible);
     }
 
-    public void restartCountdown(){
+    public void restartCountdown() {
         setGiftViewVisible(false);
 
         setTime(mDefaultCountdownTime);
         startCountDown();
     }
 
-    private void updateCountdownText(long millisecond){
+    private void updateCountdownText(long millisecond) {
         mCalendar.setTimeInMillis(millisecond);
         mCountdownTextView.setText(mTimeFormat.format(mCalendar.getTime()));
     }
 
-    private void cancelTimer(){
-        if(mTimer != null){
+    private void cancelTimer() {
+        if (mTimer != null) {
             mTimer.cancel();
             mTimer = null;
         }
@@ -185,7 +194,7 @@ public class CountDownGiftCoinView extends LinearLayout {
         super.onAttachedToWindow();
         startCountDown();
 
-        if(getContext() instanceof OnReceiveGiftListener){
+        if (getContext() instanceof OnReceiveGiftListener) {
             mListener = (OnReceiveGiftListener) getContext();
         }
     }
@@ -197,7 +206,7 @@ public class CountDownGiftCoinView extends LinearLayout {
         super.onDetachedFromWindow();
     }
 
-    public interface OnReceiveGiftListener{
+    public interface OnReceiveGiftListener {
         void onReceiveGift(View view);
     }
 }
