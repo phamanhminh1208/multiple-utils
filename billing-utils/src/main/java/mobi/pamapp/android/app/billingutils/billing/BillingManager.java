@@ -80,6 +80,8 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
 
     private int mBillingClientResponseCode = BILLING_MANAGER_NOT_INITIALIZED;
 
+    private boolean isDestroyed;
+
     @Override
     public BillingManager getBillingManager() {
         return this;
@@ -108,6 +110,7 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
         mBillingConstant = billingConstants;
         mBillingUpdatesListener = updatesListener;
         mBillingClient = BillingClient.newBuilder(mActivity).setListener(this).build();
+        isDestroyed = false;
 
         Log.d(TAG, "Starting setup.");
 
@@ -117,8 +120,11 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
         startServiceConnection(new Runnable() {
             @Override
             public void run() {
+                if (isDestroyed) return;
+
                 // Notifying the listener that billing client is ready
-                mBillingUpdatesListener.onBillingClientSetupSuccess();
+                if (mBillingUpdatesListener != null)
+                    mBillingUpdatesListener.onBillingClientSetupSuccess();
                 // IAB is fully set up. Now, let's get an inventory of stuff we own.
                 Log.d(TAG, "Setup successful. Querying inventory.");
                 queryPurchases();
@@ -131,6 +137,8 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
      */
     @Override
     public void onPurchasesUpdated(int resultCode, List<Purchase> purchases) {
+        if (isDestroyed) return;
+
         if (resultCode == BillingResponse.OK) {
             if (purchases != null) {
                 for (Purchase purchase : purchases) {
@@ -139,16 +147,20 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
                     SharedPreferenceUtil.setBooleanValue(mActivity, getSkuKey(purchase.getSku()), true);
                     mTokenSkuMap.put(purchase.getPurchaseToken(), purchase.getSku());
 
-                    mBillingUpdatesListener.onPurchaseSuccess(purchase.getSku(), purchase.getPurchaseToken());
+                    if (mBillingUpdatesListener != null)
+                        mBillingUpdatesListener.onPurchaseSuccess(purchase.getSku(), purchase.getPurchaseToken());
                 }
             }
-            mBillingUpdatesListener.onPurchasesUpdated(purchases);
+            if (mBillingUpdatesListener != null)
+                mBillingUpdatesListener.onPurchasesUpdated(purchases);
         } else if (resultCode == BillingResponse.USER_CANCELED) {
             Log.i(TAG, "onPurchasesUpdated() - user cancelled the purchase flow - skipping");
-            mBillingUpdatesListener.onPurchaseFail(purchases);
+            if (mBillingUpdatesListener != null)
+                mBillingUpdatesListener.onPurchaseFail(purchases);
         } else {
             Log.w(TAG, "onPurchasesUpdated() got unknown resultCode: " + resultCode);
-            mBillingUpdatesListener.onPurchaseFail(purchases);
+            if (mBillingUpdatesListener != null)
+                mBillingUpdatesListener.onPurchaseFail(purchases);
         }
     }
 
@@ -164,6 +176,8 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
      */
     public void initiatePurchaseFlow(final String skuId, final ArrayList<String> oldSkus,
                                      final @SkuType String billingType) {
+        if (isDestroyed) return;
+        
         Runnable purchaseFlowRequest = new Runnable() {
             @Override
             public void run() {
@@ -190,6 +204,8 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
      */
     public void destroy() {
         Log.d(TAG, "Destroying the manager.");
+
+        isDestroyed = true;
 
         mTokenSkuMap.clear();
         mPurchases.clear();
@@ -226,7 +242,8 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
                                 @Override
                                 public void onSkuDetailsResponse(int responseCode,
                                                                  List<SkuDetails> skuDetailsList) {
-                                    listener.onSkuDetailsResponse(responseCode, skuDetailsList);
+                                    if (listener != null)
+                                        listener.onSkuDetailsResponse(responseCode, skuDetailsList);
                                 }
                             });
                 }
@@ -240,6 +257,8 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
         // If we've already scheduled to consume this token - no action is needed (this could happen
         // if you received the token when querying purchases inside onReceive() and later from
         // onActivityResult()
+        if (isDestroyed) return;
+
         if (mTokensToBeConsumed == null) {
             mTokensToBeConsumed = new HashSet<>();
         } else if (mTokensToBeConsumed.contains(purchaseToken)) {
@@ -258,10 +277,11 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
                     String sku = mTokenSkuMap.get(purchaseToken);
                     Log.d("PAM", "consumed sku: " + sku);
                     SharedPreferenceUtil.setBooleanValue(mActivity, getSkuKey(sku), false);
-                    mBillingUpdatesListener.onConsumeSuccess(sku, purchaseToken, responseCode);
+                    if (mBillingUpdatesListener != null)
+                        mBillingUpdatesListener.onConsumeSuccess(sku, purchaseToken, responseCode);
 
                     mTokenSkuMap.remove(purchaseToken);
-                } else {
+                } else if (mBillingUpdatesListener != null) {
                     mBillingUpdatesListener.onConsumeFail(purchaseToken, responseCode);
                 }
             }
@@ -349,11 +369,13 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
      * a listener
      */
     public void queryPurchases() {
+        if (isDestroyed) return;
+
         Runnable queryToExecute = new Runnable() {
             @Override
             public void run() {
                 //skip if billing client is null
-                if (mBillingClient == null) {
+                if (isDestroyed || mBillingClient == null) {
                     return;
                 }
 
@@ -393,7 +415,7 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
     }
 
     public void startServiceConnection(final Runnable executeOnSuccess) {
-        if (mBillingClient == null) {
+        if (isDestroyed || mBillingClient == null) {
             return;
         }
 
@@ -401,6 +423,8 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
             @Override
             public void onBillingSetupFinished(@BillingResponse int billingResponseCode) {
                 Log.d(TAG, "Setup finished. Response code: " + billingResponseCode);
+
+                if (isDestroyed) return;
 
                 if (billingResponseCode == BillingResponse.OK) {
                     mIsServiceConnected = true;
