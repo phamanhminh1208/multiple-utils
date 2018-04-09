@@ -177,7 +177,7 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
     public void initiatePurchaseFlow(final String skuId, final ArrayList<String> oldSkus,
                                      final @SkuType String billingType) {
         if (isDestroyed) return;
-        
+
         Runnable purchaseFlowRequest = new Runnable() {
             @Override
             public void run() {
@@ -387,7 +387,7 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
                 if (areSubscriptionsSupported()) {
                     PurchasesResult subscriptionResult
                             = mBillingClient.queryPurchases(SkuType.SUBS);
-                    if (subscriptionResult != null) {
+                    if (subscriptionResult != null && subscriptionResult.getPurchasesList() != null) {
                         Log.i(TAG, "Querying purchases and subscriptions elapsed time: "
                                 + (System.currentTimeMillis() - time) + "ms");
                         Log.i(TAG, "Querying subscriptions result code: "
