@@ -406,6 +406,16 @@ public class PromptDialog extends Dialog {
         return this;
     }
 
+    public PromptDialog setPositiveDrawable(int drawableId){
+        mPositiveBtn.setCompoundDrawablesWithIntrinsicBounds(drawableId, 0, 0, 0);
+        return this;
+    }
+
+    public PromptDialog setNagativeDrawable(int drawableId){
+        mNegativeBtn.setCompoundDrawablesWithIntrinsicBounds(drawableId, 0, 0, 0);
+        return this;
+    }
+
     public PromptDialog setNegativeListener(CharSequence btnText, OnButtonListener l) {
         mCancelBtnText = btnText;
         return setNegativeListener(l);
