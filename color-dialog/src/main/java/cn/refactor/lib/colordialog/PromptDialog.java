@@ -53,6 +53,7 @@ public class PromptDialog extends Dialog {
     private CharSequence mTitle, mContent, mOkBtnText, mCancelBtnText;
     private boolean isNegativeBtnEnabled;
     private boolean isButtonCloseVisible;
+    private int mPositiveBtnDrawableId, mNegativeBtnDrawableId;
 
     public PromptDialog(Context context) {
         this(context, 0);
@@ -129,6 +130,12 @@ public class PromptDialog extends Dialog {
 //        mContentTv.setText(Html.fromHtml(mContent.toString()));
         mPositiveBtn.setText(mOkBtnText);
         mNegativeBtn.setText(mCancelBtnText);
+        if (mPositiveBtnDrawableId > 0) {
+            mPositiveBtn.setCompoundDrawablesWithIntrinsicBounds(mPositiveBtnDrawableId, 0, 0, 0);
+        }
+        if (mNegativeBtnDrawableId > 0) {
+            mNegativeBtn.setCompoundDrawablesWithIntrinsicBounds(mNegativeBtnDrawableId, 0, 0, 0);
+        }
 
         if (isNegativeBtnEnabled) {
             contentView.findViewById(R.id.btnNegativeContainer).setVisibility(View.VISIBLE);
@@ -312,7 +319,6 @@ public class PromptDialog extends Dialog {
 
         canvas.drawPath(path, paint);
         return bitmap;
-
     }
 
 
@@ -406,13 +412,13 @@ public class PromptDialog extends Dialog {
         return this;
     }
 
-    public PromptDialog setPositiveDrawable(int drawableId){
-        mPositiveBtn.setCompoundDrawablesWithIntrinsicBounds(drawableId, 0, 0, 0);
+    public PromptDialog setPositiveDrawable(int drawableId) {
+        mPositiveBtnDrawableId = drawableId;
         return this;
     }
 
-    public PromptDialog setNagativeDrawable(int drawableId){
-        mNegativeBtn.setCompoundDrawablesWithIntrinsicBounds(drawableId, 0, 0, 0);
+    public PromptDialog setNagativeDrawable(int drawableId) {
+        mNegativeBtnDrawableId = drawableId;
         return this;
     }
 
