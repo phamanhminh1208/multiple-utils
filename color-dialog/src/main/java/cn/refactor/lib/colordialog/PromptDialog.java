@@ -55,7 +55,8 @@ public class PromptDialog extends Dialog {
     private boolean isNegativeBtnEnabled;
     private boolean isButtonCloseVisible;
     private int mPositiveBtnDrawableId, mNegativeBtnDrawableId;
-    private int mContentTextAlignment = Gravity.CENTER;
+    private int mPositiveBtnTextColor = -1, mNegativeBtnTextColor = 0xffffff;
+    private int mContentTextAlignment = Gravity.LEFT;
 
     public PromptDialog(Context context) {
         this(context, 0);
@@ -134,12 +135,21 @@ public class PromptDialog extends Dialog {
 //        mContentTv.setText(Html.fromHtml(mContent.toString()));
         mPositiveBtn.setText(mOkBtnText);
         mNegativeBtn.setText(mCancelBtnText);
+
         if (mPositiveBtnDrawableId > 0) {
             mPositiveBtn.setCompoundDrawablesWithIntrinsicBounds(mPositiveBtnDrawableId, 0, 0, 0);
         }
         if (mNegativeBtnDrawableId > 0) {
             mNegativeBtn.setCompoundDrawablesWithIntrinsicBounds(mNegativeBtnDrawableId, 0, 0, 0);
         }
+
+        if(mPositiveBtnTextColor != 0xffffff){
+            mPositiveBtn.setTextColor(mPositiveBtnTextColor);
+        }
+        if(mNegativeBtnTextColor != 0xffffff){
+            mNegativeBtn.setTextColor(mNegativeBtnTextColor);
+        }
+
 
         if (isNegativeBtnEnabled) {
             contentView.findViewById(R.id.btnNegativeContainer).setVisibility(View.VISIBLE);
@@ -428,6 +438,16 @@ public class PromptDialog extends Dialog {
 
     public PromptDialog setNegativeDrawable(int drawableId) {
         mNegativeBtnDrawableId = drawableId;
+        return this;
+    }
+
+    public PromptDialog setPositiveTextColor(int color){
+        mPositiveBtnTextColor = color;
+        return this;
+    }
+
+    public PromptDialog setNegativeTextColor(int color){
+        mNegativeBtnTextColor = color;
         return this;
     }
 
