@@ -24,6 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import cn.refactor.lib.colordialog.util.DisplayUtil;
 
 /**
@@ -55,7 +57,7 @@ public class PromptDialog extends Dialog {
     private boolean isNegativeBtnEnabled;
     private boolean isButtonCloseVisible;
     private int mPositiveBtnDrawableId, mNegativeBtnDrawableId;
-    private int mPositiveBtnTextColor = -1, mNegativeBtnTextColor = 0xffffff;
+    private AtomicInteger mPositiveBtnTextColor, mNegativeBtnTextColor;
     private int mContentTextAlignment = Gravity.LEFT;
 
     public PromptDialog(Context context) {
@@ -143,11 +145,11 @@ public class PromptDialog extends Dialog {
             mNegativeBtn.setCompoundDrawablesWithIntrinsicBounds(mNegativeBtnDrawableId, 0, 0, 0);
         }
 
-        if(mPositiveBtnTextColor != 0xffffff){
-            mPositiveBtn.setTextColor(mPositiveBtnTextColor);
+        if (mPositiveBtnTextColor != null) {
+            mPositiveBtn.setTextColor(mPositiveBtnTextColor.get());
         }
-        if(mNegativeBtnTextColor != 0xffffff){
-            mNegativeBtn.setTextColor(mNegativeBtnTextColor);
+        if (mNegativeBtnTextColor != null) {
+            mNegativeBtn.setTextColor(mNegativeBtnTextColor.get());
         }
 
 
@@ -395,7 +397,7 @@ public class PromptDialog extends Dialog {
         return setContentText(getContext().getString(resId));
     }
 
-    public PromptDialog setContentTextAlignment(int alignment){
+    public PromptDialog setContentTextAlignment(int alignment) {
         this.mContentTextAlignment = alignment;
         return this;
     }
@@ -441,13 +443,13 @@ public class PromptDialog extends Dialog {
         return this;
     }
 
-    public PromptDialog setPositiveTextColor(int color){
-        mPositiveBtnTextColor = color;
+    public PromptDialog setPositiveTextColor(int color) {
+        mPositiveBtnTextColor = new AtomicInteger(color);
         return this;
     }
 
-    public PromptDialog setNegativeTextColor(int color){
-        mNegativeBtnTextColor = color;
+    public PromptDialog setNegativeTextColor(int color) {
+        mNegativeBtnTextColor = new AtomicInteger(color);
         return this;
     }
 
