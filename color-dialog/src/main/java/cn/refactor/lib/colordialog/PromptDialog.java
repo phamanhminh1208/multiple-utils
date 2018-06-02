@@ -12,6 +12,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -54,6 +55,7 @@ public class PromptDialog extends Dialog {
     private boolean isNegativeBtnEnabled;
     private boolean isButtonCloseVisible;
     private int mPositiveBtnDrawableId, mNegativeBtnDrawableId;
+    private int mContentTextAlignment = Gravity.CENTER;
 
     public PromptDialog(Context context) {
         this(context, 0);
@@ -126,6 +128,8 @@ public class PromptDialog extends Dialog {
         } else {
             mContentTv.setText(Html.fromHtml(mContent.toString()));
         }
+        mContentTv.setGravity(mContentTextAlignment);
+
 
 //        mContentTv.setText(Html.fromHtml(mContent.toString()));
         mPositiveBtn.setText(mOkBtnText);
@@ -381,6 +385,11 @@ public class PromptDialog extends Dialog {
         return setContentText(getContext().getString(resId));
     }
 
+    public PromptDialog setContentTextAlignment(int alignment){
+        this.mContentTextAlignment = alignment;
+        return this;
+    }
+
     public TextView getTitleTextView() {
         return mTitleTv;
     }
@@ -417,7 +426,7 @@ public class PromptDialog extends Dialog {
         return this;
     }
 
-    public PromptDialog setNagativeDrawable(int drawableId) {
+    public PromptDialog setNegativeDrawable(int drawableId) {
         mNegativeBtnDrawableId = drawableId;
         return this;
     }
