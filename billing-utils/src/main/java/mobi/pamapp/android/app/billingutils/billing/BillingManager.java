@@ -15,10 +15,11 @@
  */
 package mobi.pamapp.android.app.billingutils.billing;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClient.BillingResponse;
@@ -70,7 +71,7 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
 
     private BillingStatusListener mBillingUpdatesListener;
 
-    private Activity mActivity;
+    private AppCompatActivity mActivity;
 
     private final List<Purchase> mPurchases = new ArrayList<>();
 
@@ -104,7 +105,7 @@ public class BillingManager implements PurchasesUpdatedListener, BillingProvider
         void onServiceConnected(@BillingResponse int resultCode);
     }
 
-    public BillingManager(Activity activity, final IBillingConstants billingConstants, @NonNull final BillingStatusListener updatesListener) {
+    public BillingManager(AppCompatActivity activity, final IBillingConstants billingConstants, @NonNull final BillingStatusListener updatesListener) {
         Log.d(TAG, "Creating Billing client.");
         mActivity = activity;
         mBillingConstant = billingConstants;

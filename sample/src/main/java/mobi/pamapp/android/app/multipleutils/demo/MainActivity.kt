@@ -2,20 +2,24 @@ package mobi.pamapp.android.app.multipleutils.demo
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import cn.refactor.lib.colordialog.PromptDialog
-import kotlinx.android.synthetic.main.activity_main.*
 import mobi.pamapp.android.app.multipleutils.R
+import mobi.pamapp.android.app.multipleutils.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        btnShowDialog.setOnClickListener(View.OnClickListener {
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.btnShowDialog.setOnClickListener(View.OnClickListener {
             val dialog: PromptDialog = PromptDialog(this)
                     .setDialogType(PromptDialog.DIALOG_TYPE_HELP)
                     .setTitleText("Demo Tittle")
@@ -30,6 +34,6 @@ class MainActivity : AppCompatActivity() {
                     .showDialog()
         })
 
-        btnShowDialog.performClick()
+        binding.btnShowDialog.performClick()
     }
 }
