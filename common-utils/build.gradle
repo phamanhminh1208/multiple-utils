@@ -28,4 +28,6 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.espressoVersion"
     androidTestImplementation "androidx.annotation:annotation:$rootProject.annotationVersion"
     implementation "com.google.guava:guava:$rootProject.guavaVersion"
+    implementation "com.google.android.material:material:$rootProject.materialVersion"
+    implementation 'com.google.android.play:review:2.0.0'
 }
