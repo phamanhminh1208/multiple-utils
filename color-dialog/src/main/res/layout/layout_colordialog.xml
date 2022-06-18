@@ -8,14 +8,14 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/llBkg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/shape_top"
         android:orientation="vertical">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -39,7 +39,7 @@
                 android:layout_height="match_parent"
                 android:minWidth="250dp">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivContent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
                     android:scaleType="fitCenter"
                     android:visibility="gone"/>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -62,16 +62,16 @@
             </FrameLayout>
 
         </LinearLayout>
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/llBtnGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnPositive"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
             android:textColor="#676767" />
 
 
-        <LinearLayout
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@android:color/white"
@@ -96,9 +96,9 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center_vertical"
                 android:background="#929292" />
-        </LinearLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnNegative"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -109,6 +109,6 @@
             android:minHeight="40dp"
             android:textColor="#676767" />
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </LinearLayout>
