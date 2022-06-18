@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                     .setPositiveDrawable(R.drawable.abc_btn_check_material)
                     .setContentTextAlignment(Gravity.CENTER)
                     .setPositiveTextColor(Color.RED)
-                    .setButtonCloseVisible(true)
+                    .setButtonCloseVisible(false)
                     .setCancelable(false, false)
                     .showDialog()
         })
