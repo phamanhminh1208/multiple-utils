@@ -16,10 +16,13 @@ import java.util.List;
  */
 
 public final class PlayStoreUtil {
+    public static String getPlayStoreLink(String packageName){
+        return "https://play.google.com/store/apps/details?id=" + packageName;
+    }
 
     public static void openAppPage(Context context) {
         try {
-            openAppInPlaystore(context, context.getPackageName());
+            openAppInPlaystore(context, context.getApplicationContext().getPackageName());
         } catch (ActivityNotFoundException e) {
             try {
                 Intent rateIntent = rateIntentForUrl(context, "https://play.google.com/store/apps/details");
@@ -84,7 +87,7 @@ public final class PlayStoreUtil {
         // if GP not present on device, open web browser
         if (!marketFound) {
             Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://play.google.com/store/apps/details?id=" + appId));
+                    Uri.parse(getPlayStoreLink(appId)));
             context.startActivity(webIntent);
         }
     }

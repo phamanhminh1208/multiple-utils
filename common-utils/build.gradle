@@ -1,16 +1,13 @@
 apply plugin: "com.android.library"
 
 android {
-    compileSdkVersion "$rootProject.compileSdkVersion"
-    buildToolsVersion "$rootProject.buildToolsVersion"
+    compileSdk rootProject.compileSdkVersion
 
     defaultConfig {
         minSdkVersion "$rootProject.minSdkVersion"
         targetSdkVersion "$rootProject.targetSdkVersion"
-        versionCode 1
-        versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
     }
     buildTypes {
@@ -25,10 +22,12 @@ android {
 
 dependencies {
     implementation fileTree(include: ["*.jar"], dir: "libs")
-    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
     testImplementation "junit:junit:$rootProject.junitVersion"
-    androidTestImplementation "com.android.support.test:runner:$rootProject.testRunnerVersion"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
-    androidTestImplementation "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
-    implementation "com.google.guava:guava:18.0"
+    androidTestImplementation "androidx.test.ext:junit:$rootProject.junitExtVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.espressoVersion"
+    androidTestImplementation "androidx.annotation:annotation:$rootProject.annotationVersion"
+    implementation "com.google.guava:guava:$rootProject.guavaVersion"
+    implementation "com.google.android.material:material:$rootProject.materialVersion"
+    implementation 'com.google.android.play:review:2.0.0'
 }

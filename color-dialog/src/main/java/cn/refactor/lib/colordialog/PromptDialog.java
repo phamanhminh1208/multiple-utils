@@ -20,9 +20,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.LinearLayoutCompat;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -105,9 +106,9 @@ public class PromptDialog extends Dialog {
         ImageView logoIv = (ImageView) contentView.findViewById(R.id.logoIv);
         logoIv.setBackgroundResource(getLogoResId(mDialogType));
 
-        LinearLayout topLayout = (LinearLayout) contentView.findViewById(R.id.topLayout);
+        LinearLayoutCompat topLayout = (LinearLayoutCompat) contentView.findViewById(R.id.topLayout);
         ImageView triangleIv = new ImageView(getContext());
-        triangleIv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DisplayUtil.dp2px(getContext(), 10)));
+        triangleIv.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DisplayUtil.dp2px(getContext(), 10)));
         triangleIv.setImageBitmap(createTriangel((int) (DisplayUtil.getScreenSize(getContext()).x * 0.7), DisplayUtil.dp2px(getContext(), 10)));
         topLayout.addView(triangleIv);
 
@@ -155,7 +156,7 @@ public class PromptDialog extends Dialog {
 
         if (isNegativeBtnEnabled) {
             contentView.findViewById(R.id.btnNegativeContainer).setVisibility(View.VISIBLE);
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPositiveBtn.getLayoutParams();
+            LinearLayoutCompat.LayoutParams params = (LinearLayoutCompat.LayoutParams) mPositiveBtn.getLayoutParams();
             params.weight = 1;
             mPositiveBtn.setLayoutParams(params);
         }

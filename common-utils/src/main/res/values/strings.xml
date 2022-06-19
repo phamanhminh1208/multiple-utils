@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Utils</string>
+
+    <!-- rate dialog -->
+    <string name="rateAppDialogTitle">Rate App!</string>
+    <string name="rateAppDialogContent">If you are enjoying our game, please take a moment to rate it on PlayStore. Thank for your support!</string>
+    <string name="rateNow">Rate Now</string>
+    <string name="remindMeLater">Remind me later</string>
+    <string name="noThank">No, Thanks</string>
+    <string name="moreApp">More App</string>
 </resources>
