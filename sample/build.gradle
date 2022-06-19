@@ -35,4 +35,5 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.espressoVersion"
     androidTestImplementation "androidx.annotation:annotation:$rootProject.annotationVersion"
     implementation project(':color-dialog')
+    implementation project(':common-utils')
 }
