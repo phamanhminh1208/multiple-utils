@@ -31,3 +31,17 @@ dependencies {
     implementation "com.google.android.material:material:$rootProject.materialVersion"
     implementation 'com.google.android.play:review:2.0.0'
 }
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = 'com.github.phamanhminh1208.multiple-utils'
+                artifactId = 'common-utils'
+                version = "$library_version"
+
+                artifact bundleReleaseAar
+            }
+        }
+    }
+}
