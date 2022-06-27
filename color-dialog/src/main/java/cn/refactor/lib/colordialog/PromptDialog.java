@@ -18,8 +18,10 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -44,6 +46,8 @@ public class PromptDialog extends Dialog {
     public static final int DIALOG_TYPE_WRONG = 2;
     public static final int DIALOG_TYPE_SUCCESS = 3;
     public static final int DIALOG_TYPE_WARNING = 4;
+    public static final int DIALOG_TYPE_PROGRESS = 10;
+    public static final int DIALOG_TYPE_NONE = 11;
     public static final int DIALOG_TYPE_DEFAULT = DIALOG_TYPE_INFO;
 
     private AnimationSet mAnimIn, mAnimOut;
@@ -52,10 +56,16 @@ public class PromptDialog extends Dialog {
     private ImageButton mCloseBtn;
     private OnButtonListener mOnPositiveListener, mOnNegativeListener;
 
+    //custom view
+    private FrameLayout mAdditionContainerView;
+    private View mCustomView;
+
+    private ProgressBar mProgressBar;
+
     private int mDialogType;
     private boolean mIsShowAnim;
     private CharSequence mTitle, mContent, mOkBtnText, mCancelBtnText;
-    private boolean isNegativeBtnEnabled;
+    private boolean isPositiveBtnEnabled, isNegativeBtnEnabled;
     private boolean isButtonCloseVisible;
     private int mPositiveBtnDrawableId, mNegativeBtnDrawableId;
     private AtomicInteger mPositiveBtnTextColor, mNegativeBtnTextColor;
@@ -92,6 +102,7 @@ public class PromptDialog extends Dialog {
         resizeDialog();
 
         mDialogView = getWindow().getDecorView().findViewById(android.R.id.content);
+        mAdditionContainerView = (FrameLayout) contentView.findViewById(R.id.additionContainer);
         mTitleTv = (TextView) contentView.findViewById(R.id.tvTitle);
         mContentTv = (TextView) contentView.findViewById(R.id.tvContent);
         mPositiveBtn = (TextView) contentView.findViewById(R.id.btnPositive);
@@ -104,17 +115,15 @@ public class PromptDialog extends Dialog {
 
         View llBtnGroup = findViewById(R.id.llBtnGroup);
         ImageView logoIv = (ImageView) contentView.findViewById(R.id.logoIv);
-        logoIv.setBackgroundResource(getLogoResId(mDialogType));
+
+        setBtnBackground(mPositiveBtn, mNegativeBtn);
+        setBottomCorners(llBtnGroup);
 
         LinearLayoutCompat topLayout = (LinearLayoutCompat) contentView.findViewById(R.id.topLayout);
         ImageView triangleIv = new ImageView(getContext());
         triangleIv.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DisplayUtil.dp2px(getContext(), 10)));
         triangleIv.setImageBitmap(createTriangel((int) (DisplayUtil.getScreenSize(getContext()).x * 0.7), DisplayUtil.dp2px(getContext(), 10)));
         topLayout.addView(triangleIv);
-
-        setBtnBackground(mPositiveBtn, mNegativeBtn);
-        setBottomCorners(llBtnGroup);
-
 
         int radius = DisplayUtil.dp2px(getContext(), DEFAULT_RADIUS);
         float[] outerRadii = new float[]{radius, radius, radius, radius, 0, 0, 0, 0};
@@ -125,14 +134,26 @@ public class PromptDialog extends Dialog {
         RelativeLayout llTop = (RelativeLayout) findViewById(R.id.llTop);
         llTop.setBackgroundDrawable(shapeDrawable);
 
+        if(mDialogType < DIALOG_TYPE_PROGRESS) {
+            logoIv.setBackgroundResource(getLogoResId(mDialogType));
+        }else if(mDialogType == DIALOG_TYPE_PROGRESS){
+            logoIv.setVisibility(View.GONE);
+            mProgressBar = (ProgressBar) contentView.findViewById(R.id.progressBarTop);
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
         mTitleTv.setText(mTitle);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            mContentTv.setText(Html.fromHtml(mContent.toString(), Html.FROM_HTML_MODE_LEGACY));
-        } else {
-            mContentTv.setText(Html.fromHtml(mContent.toString()));
+        if(mContent != null) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                mContentTv.setText(Html.fromHtml(mContent.toString(), Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                mContentTv.setText(Html.fromHtml(mContent.toString()));
+            }
+            mContentTv.setGravity(mContentTextAlignment);
+        }else{
+            mContentTv.setVisibility(View.GONE);
         }
-        mContentTv.setGravity(mContentTextAlignment);
 
 
 //        mContentTv.setText(Html.fromHtml(mContent.toString()));
@@ -153,12 +174,20 @@ public class PromptDialog extends Dialog {
             mNegativeBtn.setTextColor(mNegativeBtnTextColor.get());
         }
 
-
         if (isNegativeBtnEnabled) {
             contentView.findViewById(R.id.btnNegativeContainer).setVisibility(View.VISIBLE);
             LinearLayoutCompat.LayoutParams params = (LinearLayoutCompat.LayoutParams) mPositiveBtn.getLayoutParams();
             params.weight = 1;
             mPositiveBtn.setLayoutParams(params);
+        }
+
+        if(!isPositiveBtnEnabled){
+            mPositiveBtn.setVisibility(View.GONE);
+        }
+
+        if(mCustomView != null){
+            mAdditionContainerView.setVisibility(View.VISIBLE);
+            mAdditionContainerView.addView(mCustomView);
         }
     }
 
@@ -338,7 +367,6 @@ public class PromptDialog extends Dialog {
         return bitmap;
     }
 
-
     private void setBtnBackground(final TextView... btns) {
         for (TextView btn : btns) {
             btn.setTextColor(createColorStateList(getContext().getResources().getColor(getColorResId(mDialogType)),
@@ -346,7 +374,6 @@ public class PromptDialog extends Dialog {
             btn.setBackgroundDrawable(getContext().getResources().getDrawable(getSelBtn(mDialogType)));
         }
     }
-
 
     private void setBottomCorners(View llBtnGroup) {
         int radius = DisplayUtil.dp2px(getContext(), DEFAULT_RADIUS);
@@ -421,6 +448,8 @@ public class PromptDialog extends Dialog {
     }
 
     public PromptDialog setPositiveListener(CharSequence btnText, OnButtonListener l) {
+        isPositiveBtnEnabled = true;
+
         mOkBtnText = btnText;
         return setPositiveListener(l);
     }
@@ -430,6 +459,8 @@ public class PromptDialog extends Dialog {
     }
 
     public PromptDialog setPositiveListener(OnButtonListener l) {
+        isPositiveBtnEnabled = true;
+
         mOnPositiveListener = l;
         return this;
     }
@@ -487,6 +518,12 @@ public class PromptDialog extends Dialog {
         return this;
     }
 
+    public PromptDialog setCustomView(View customView){
+        mCustomView = customView;
+
+        return this;
+    }
+
     public PromptDialog setCancelable(boolean cancelable, boolean cancelOnTouchOutside) {
         this.setCancelable(cancelable);
         this.setCanceledOnTouchOutside(cancelOnTouchOutside);
@@ -502,4 +539,7 @@ public class PromptDialog extends Dialog {
         void onClick(PromptDialog dialog);
     }
 
+    public ProgressBar getProgressBar(){
+        return mProgressBar;
+    }
 }

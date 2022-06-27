@@ -25,7 +25,16 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_centerInParent="true"
-                android:layout_margin="10dp" />
+                android:layout_margin="10dp"/>
+
+            <androidx.core.widget.ContentLoadingProgressBar
+                android:id="@+id/progressBarTop"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_centerInParent="true"
+                android:layout_margin="10dp"
+                android:visibility="gone"/>
         </RelativeLayout>
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -80,6 +89,14 @@
             android:paddingTop="5dp"
             android:textColor="@color/color_dialog_content_prompt"
             android:visibility="visible" />
+
+        <FrameLayout
+            android:id="@+id/additionContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:visibility="gone"/>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
