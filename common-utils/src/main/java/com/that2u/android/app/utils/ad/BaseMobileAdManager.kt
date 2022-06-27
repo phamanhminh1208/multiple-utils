@@ -2,6 +2,7 @@ package com.that2u.android.app.utils.ad
 
 import android.app.Activity
 import androidx.lifecycle.MutableLiveData
+import kotlin.random.Random
 
 abstract class BaseMobileAdManager(var activity: Activity?) {
     protected var adNetworkManagers: MutableList<BaseAdNetworkManager?> = ArrayList()
@@ -88,7 +89,7 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
         onRewardedReceived = null
 
         for (adNetworkManager in adNetworkManagers) {
-            adNetworkManager?.destroy()
+            adNetworkManager?.onDestroy()
         }
 
         activity = null
@@ -157,10 +158,34 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
     }
 
     // -- banner --
+    open fun canShowRandomBannerAd(): Boolean = false
+
     open fun loadBannerAd() {
         activity?.let { context ->
-            if (adNetworkManagers.size > 0) {
-                adNetworkManagers[0]?.loadBannerAd(context)
+            if(canShowRandomBannerAd()){
+                var count = 0;
+                for (adNetwork in adNetworkManagers){
+                    if(adNetwork?.canShowBannerAd(context) == true){
+                        count++
+                    }
+                }
+
+                val showIdx = Random.nextInt(count)
+                var idx = 0;
+                for (adNetwork in adNetworkManagers){
+                    if(adNetwork?.canShowBannerAd(context) == true){
+                        if(idx == showIdx){
+                            adNetwork.loadBannerAd(context)
+                        }else{
+                            adNetwork.hideBannerAd(context)
+                        }
+                        idx++
+                    }
+                }
+            }else{
+                if (adNetworkManagers.size > 0) {
+                    adNetworkManagers[0]?.loadBannerAd(context)
+                }
             }
         }
     }

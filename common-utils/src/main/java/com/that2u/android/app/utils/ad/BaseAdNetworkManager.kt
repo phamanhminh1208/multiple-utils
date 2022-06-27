@@ -1,6 +1,5 @@
 package com.that2u.android.app.utils.ad
 
-import com.that2u.android.app.utils.ad.AdStatusChangeListener
 import android.app.Activity
 
 abstract class BaseAdNetworkManager {
@@ -13,12 +12,18 @@ abstract class BaseAdNetworkManager {
 
     abstract fun initialize(context: Activity?)
     abstract fun onResume(context: Activity?)
-    abstract fun destroy()
+    abstract fun onDestroy()
+    abstract fun finish()
+
     abstract fun canShowInterstitialAd(context: Activity?): Boolean
     abstract fun loadInterstitialAd(context: Activity?)
     abstract fun showInterstitialAd(context: Activity?)
+
     abstract fun canShowRewardedVideoAd(context: Activity?): Boolean
     abstract fun loadRewardedVideoAd(context: Activity?)
     abstract fun showRewardedVideoAd(context: Activity?)
+
+    abstract fun canShowBannerAd(context: Activity?): Boolean
+    abstract fun hideBannerAd(context: Activity?)
     abstract fun loadBannerAd(context: Activity?)
 }
