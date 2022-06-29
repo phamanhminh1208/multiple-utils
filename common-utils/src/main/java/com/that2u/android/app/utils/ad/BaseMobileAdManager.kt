@@ -14,6 +14,8 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
     //listener
     var onRewardedReceived: ((Double) -> Unit)? = null
 
+    private var numberInitializedAdManager: Int = 0;
+
     fun initialize(adManagerClassList: List<Class<out BaseAdNetworkManager>>?) {
         if (activity != null && adManagerClassList != null && adManagerClassList.isNotEmpty()) {
             //create
@@ -43,12 +45,39 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
         networkIndex: Int
     ): AdStatusChangeListener {
         return object : AdStatusChangeListener {
+            override fun onInitialized() {
+                numberInitializedAdManager++;
+                if(numberInitializedAdManager == adNetworkManagers.size){
+                    if(loadBannerAdAfterInitialized()){
+                        loadBannerAd()
+                    }
+                }
+            }
+
+            override fun onBannerAdStatusChanged(isLoaded: Boolean) {
+                if(!isLoaded){
+                    if (adNetworkManagers.size > networkIndex + 1) {
+                        if (adNetworkManagers[networkIndex + 1] != null) {
+                            adNetworkManagers[networkIndex + 1]!!.loadBannerAd(context)
+                        }
+                    }
+                }
+            }
+
             override fun onInterstitialAdStatusChanged(isLoaded: Boolean) {
                 interstitialAdLoadedLiveData.postValue(isLoaded)
             }
 
             override fun onRewardedVideoAdStatusChanged(isLoaded: Boolean) {
                 rewardedAdLoadedLiveData.postValue(isLoaded)
+            }
+
+            override fun onBannerAdFailToLoad() {
+                if (adNetworkManagers.size > networkIndex + 1) {
+                    if (adNetworkManagers[networkIndex + 1] != null) {
+                        adNetworkManagers[networkIndex + 1]!!.loadBannerAd(context)
+                    }
+                }
             }
 
             override fun onInterstitialAdFailToLoad() {
@@ -85,7 +114,7 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
         }
     }
 
-    open fun destroy() {
+    open fun onDestroy() {
         onRewardedReceived = null
 
         for (adNetworkManager in adNetworkManagers) {
@@ -93,6 +122,12 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
         }
 
         activity = null
+    }
+
+    fun finish(){
+        for (adManager in this.adNetworkManagers){
+            adManager?.finish()
+        }
     }
 
     // -- interstitial --
@@ -159,6 +194,7 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
 
     // -- banner --
     open fun canShowRandomBannerAd(): Boolean = false
+    open fun loadBannerAdAfterInitialized(): Boolean = false
 
     open fun loadBannerAd() {
         activity?.let { context ->
@@ -183,8 +219,10 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
                     }
                 }
             }else{
-                if (adNetworkManagers.size > 0) {
-                    adNetworkManagers[0]?.loadBannerAd(context)
+                for (adNetwork in adNetworkManagers){
+                    if (adNetwork?.canShowBannerAd(context) == true) {
+                        adNetwork.loadBannerAd(context)
+                    }
                 }
             }
         }

@@ -57,6 +57,7 @@ public class PromptDialog extends Dialog {
     private OnButtonListener mOnPositiveListener, mOnNegativeListener;
 
     //custom view
+    private double dialogSize = 0.7;
     private FrameLayout mAdditionContainerView;
     private View mCustomView;
 
@@ -193,7 +194,7 @@ public class PromptDialog extends Dialog {
 
     private void resizeDialog() {
         WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.width = (int) (DisplayUtil.getScreenSize(getContext()).x * 0.7);
+        params.width = (int) (DisplayUtil.getScreenSize(getContext()).x * dialogSize);
         getWindow().setAttributes(params);
     }
 
@@ -527,6 +528,18 @@ public class PromptDialog extends Dialog {
     public PromptDialog setCancelable(boolean cancelable, boolean cancelOnTouchOutside) {
         this.setCancelable(cancelable);
         this.setCanceledOnTouchOutside(cancelOnTouchOutside);
+        return this;
+    }
+
+    public PromptDialog setDialogSize(double size){
+        if(size < 0){
+            dialogSize = 0;
+        }
+        if(size > 1){
+            dialogSize = 1;
+        }
+        dialogSize = size;
+
         return this;
     }
 
