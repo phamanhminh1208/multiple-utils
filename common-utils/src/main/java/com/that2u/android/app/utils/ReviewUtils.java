@@ -46,7 +46,8 @@ public class ReviewUtils {
     }
 
     public static void showNormalReviewDialog(Activity activity){
-        if(activity != null && !SharedPreferenceUtil.getBooleanValue(activity, NEVER_SHOW_RATE_APP_KEY, false)) {
+        if(activity != null && !activity.isDestroyed() && !activity.isFinishing() &&
+                !SharedPreferenceUtil.getBooleanValue(activity, NEVER_SHOW_RATE_APP_KEY, false)) {
             new MaterialAlertDialogBuilder(activity)
                     .setTitle(R.string.rateAppDialogTitle)
                     .setMessage(R.string.rateAppDialogContent)

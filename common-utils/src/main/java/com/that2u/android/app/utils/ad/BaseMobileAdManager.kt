@@ -24,7 +24,7 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
                 try {
                     val adManager = clz.newInstance()
                     adManager.adStatusChangeListener =
-                        createAdStatusChangedListener(activity, networkIdx++)
+                        createAdStatusChangedListener(activity!!, networkIdx++)
                     adNetworkManagers.add(adManager)
                 } catch (e: IllegalAccessException) {
                     e.printStackTrace()
@@ -35,13 +35,13 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
 
             //initialize
             for (adManager in adNetworkManagers) {
-                adManager?.initialize(activity)
+                adManager?.initialize(activity!!)
             }
         }
     }
 
     protected open fun createAdStatusChangedListener(
-        context: Activity?,
+        context: Activity,
         networkIndex: Int
     ): AdStatusChangeListener {
         return object : AdStatusChangeListener {
@@ -56,11 +56,7 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
 
             override fun onBannerAdStatusChanged(isLoaded: Boolean) {
                 if(!isLoaded){
-                    if (adNetworkManagers.size > networkIndex + 1) {
-                        if (adNetworkManagers[networkIndex + 1] != null) {
-                            adNetworkManagers[networkIndex + 1]!!.loadBannerAd(context)
-                        }
-                    }
+                    loadNextBannerAd(context, networkIndex)
                 }
             }
 
@@ -73,11 +69,7 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
             }
 
             override fun onBannerAdFailToLoad() {
-                if (adNetworkManagers.size > networkIndex + 1) {
-                    if (adNetworkManagers[networkIndex + 1] != null) {
-                        adNetworkManagers[networkIndex + 1]!!.loadBannerAd(context)
-                    }
-                }
+                loadNextBannerAd(context, networkIndex)
             }
 
             override fun onInterstitialAdFailToLoad() {
@@ -107,7 +99,7 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
     }
 
     open fun onResume() {
-        if (activity != null) {
+        activity?.let { activity ->
             for (adManager in adNetworkManagers) {
                 adManager?.onResume(activity)
             }
@@ -206,23 +198,37 @@ abstract class BaseMobileAdManager(var activity: Activity?) {
                     }
                 }
 
-                val showIdx = Random.nextInt(count)
-                var idx = 0;
-                for (adNetwork in adNetworkManagers){
-                    if(adNetwork?.canShowBannerAd(context) == true){
-                        if(idx == showIdx){
-                            adNetwork.loadBannerAd(context)
-                        }else{
-                            adNetwork.hideBannerAd(context)
+                if(count > 0) {
+                    val showIdx = Random.nextInt(count)
+                    var idx = 0;
+                    for (adNetwork in adNetworkManagers) {
+                        if (adNetwork?.canShowBannerAd(context) == true) {
+                            if (idx == showIdx) {
+                                adNetwork.loadBannerAd(context)
+                            } else {
+                                adNetwork.hideBannerAd(context)
+                            }
+                            idx++
                         }
-                        idx++
                     }
                 }
             }else{
                 for (adNetwork in adNetworkManagers){
                     if (adNetwork?.canShowBannerAd(context) == true) {
                         adNetwork.loadBannerAd(context)
+                        break
                     }
+                }
+            }
+        }
+    }
+
+    private fun loadNextBannerAd(context: Activity, networkIndex: Int){
+        if (adNetworkManagers.size > networkIndex + 1) {
+            for(i in (networkIndex + 1) until (adNetworkManagers.size)){
+                if(adNetworkManagers[i]?.canShowBannerAd(context) == true) {
+                    adNetworkManagers[i]?.loadBannerAd(context)
+                    break
                 }
             }
         }
